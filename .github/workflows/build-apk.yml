@@ -17,11 +17,23 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install dependencies
-        run: npm install
+      # TRIK: Bikin folder www dan copy semua file web ke dalamnya
+      - name: Prepare Web Directory
+        run: |
+          mkdir -p www
+          cp -r * www/ || true
+          rm -rf www/www www/.github
 
-      - name: Sync Capacitor
-        run: npx cap sync android
+      - name: Install Capacitor
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Init Capacitor and Add Android
+        run: |
+          npx cap init "Tilemap Editor" "com.wpsepta.tilemapeditor" --web-dir=www
+          npx cap add android
+          npx cap sync android
 
       - name: Build APK (Debug)
         run: |
